@@ -24,7 +24,7 @@ Info info(const std::string &what)
 	return r;
 }
 
-ErrorInfo info(const std::exception &e)
+Info info(const std::exception &e)
 {
 	return info(e.what());
 }

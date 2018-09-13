@@ -20,7 +20,7 @@ struct Ticket
 };
 
 //
-// COM smartpointer
+// COM object smartpointer
 //
 
 template<class ComT>

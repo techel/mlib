@@ -7,6 +7,8 @@
 #if defined(_WIN32)
 	#define MLIB_PLATFORM_WIN32
 #elif defined(__APPLE__) && defined(__MACH__)
+    #define MLIB_PLATFORM_UNIX
+    #define MLIB_PLATFORM_APPLEOS
 	#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 		#define MLIB_PLATFORM_IOS
 	#elif TARGET_OS_MAC
@@ -15,6 +17,7 @@
 		#error unknown Apple operating system
 	#endif
 #elif defined(__unix__)
+    #define MLIB_PLATFORM_UNIX
 	#if defined(__ANDROID__)
 		#define MLIB_PLATFORM_ANDROID
 	#elif defined(__linux__)
