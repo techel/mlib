@@ -7,6 +7,8 @@
 #include <cctype>
 #include <regex>
 
+#include <mlib/unicode/stringconv.hpp>
+
 namespace mlib::archive::ini
 {
 
