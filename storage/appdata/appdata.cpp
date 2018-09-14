@@ -3,6 +3,7 @@
 #include "appdata.hpp"
 
 #include <cstdlib>
+#include <iterator>
 #include <mlib/platform.hpp>
 
 #ifdef MLIB_PLATFORM_WIN32
@@ -23,12 +24,12 @@ using namespace std::filesystem;
 
 static void appendGenericPath(path &p, const std::string &generic)
 {
-    for(auto c : generic)
+    for(auto c = generic.begin(); c != generic.end(); ++c)
     {
-        if(c == '.')
+        if(*c == '/')
             p += path::preferred_separator;
-        else
-            p += c;
+        else if(!(*c == '.' && c+1 != generic.end() && c[1] == '.')) //ignore '..'
+            p += *c;
     }
 }
 
@@ -49,7 +50,7 @@ Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir
 #elif defined MLIB_PLATFORM_UNIX
     const char *env = getenv("HOME");
     if(!env)
-        throw EnvironmentError("$HOME");
+        throw RetrieveError("$HOME");
 
     path appdata = u8path(env);
 
@@ -67,7 +68,7 @@ Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir
         resdir = rp;
     #else  
         char cwd[260];
-        if(!getcwd(buf, 260))
+        if(!getcwd(cwd, 260))
             throw RetrieveError("getcwd");
 
         path resdir = cwd;
@@ -78,7 +79,7 @@ Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir
     appendGenericPath(appdata, appsubdir);
     appdata += path::preferred_separator;
 
-    create_directories(appdata);
+    create_directories(appdata.parent_path());
 
     resdir += path::preferred_separator;
     resdir += resourcesubdir;
@@ -88,7 +89,7 @@ Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir
     ResourcePath = std::move(resdir);
 }
 
-std::fstream Appdata::open(const std::string &spath, int flags, Type type)
+std::fstream Appdata::open(const std::string &spath, std::ios::openmode flags, Type type)
 {
     path p = (type == Type::Storage) ? StoragePath : ResourcePath;
     appendGenericPath(p, spath);

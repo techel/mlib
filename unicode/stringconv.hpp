@@ -5,7 +5,8 @@
 #include <array>
 #include <tuple>
 #include <cstddef>
-#include <cstdlib>
+#include <cstring>
+#include <string>
 #include <sstream>
 
 namespace mlib::unicode::stringconv
