@@ -2,9 +2,9 @@
 
 #include <cassert>
 #include <utility>
-#include <yfw/platform.hpp>
+#include <mlib/platform.hpp>
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 #include <Windows.h>
 #include <mlib/unicode/unicodecvt.hpp>
 #else
@@ -45,11 +45,11 @@ Instance::~Instance()
 	close();
 }
 
-bool Instance::open(const std::string &name)
+void Instance::open(const std::string &name)
 {
 	close();
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	const auto h = GetModuleHandleW(unicode::toNative(name).c_str());
 	if(!h)
 		throwLastError(".instance.open");
@@ -58,15 +58,13 @@ bool Instance::open(const std::string &name)
 	Dynamic = false;
 #else 
 #endif
-
-	return true;
 }
 
 void Instance::close()
 {
 	if(Dynamic && Handle)
 	{
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 		FreeLibrary(reinterpret_cast<HMODULE>(Handle));
 #else
 #endif
@@ -78,7 +76,7 @@ Symbol Instance::symbol(const std::string &name)
 {
 	assert(Handle);
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	return reinterpret_cast<Symbol>(GetProcAddress(reinterpret_cast<HMODULE>(Handle), name.c_str()));
 #endif
 }
@@ -92,7 +90,7 @@ Instance Instance::current()
 {
 	Instance in;
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	const auto h = GetModuleHandleW(nullptr);
 	in.Handle = reinterpret_cast<void*>(h);
 	in.Dynamic = false;

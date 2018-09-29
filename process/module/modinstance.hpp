@@ -18,13 +18,13 @@ namespace mlib::process::module
 struct Error : public std::runtime_error
 {
 	Error(const std::string &msg) : runtime_error("process.module" + msg) {}
-}
+};
 
 struct GenericError : public Error
 {
 	error::ErrorCode Code;
-	Error(const std::string &e, error::ErrorCode c) : Code(c), Error(e) {}
-}
+    GenericError(const std::string &e, error::ErrorCode c) : Code(c), Error(e) {}
+};
 
 struct InstanceNotFound : public Error
 {

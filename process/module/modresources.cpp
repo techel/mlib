@@ -2,14 +2,14 @@
 
 #include <utility>
 #include <cassert>
-#include <yfw/platform.hpp>
+#include <mlib/platform.hpp>
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 #include <Windows.h>
-#include <yfw/util/unicodecvt.hpp>
+#include <mlib/unicode/unicodecvt.hpp>
 #endif
 
-namespace YFW{namespace Module
+namespace mlib::process::module
 {
 
 Resource::Resource() noexcept : Handle(nullptr)
@@ -42,7 +42,7 @@ bool Resource::open(void *native, const std::string &resname)
 
 	close();
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	std::string type, name;
 	const auto i = resname.find_last_of(".");
 	if(i == resname.npos)
@@ -62,9 +62,9 @@ bool Resource::open(void *native, const std::string &resname)
 
 	Handle = reinterpret_cast<void*>(LoadResource(hmodule, hres));
 	Size = static_cast<size_t>(SizeofResource(hmodule, hres));
-#endif
-#error not implemented yet
 #else
+#error not implemented yet
+#endif
 
 	return true;
 }
@@ -99,4 +99,4 @@ Resource &Resource::operator=(Resource &&rhs) noexcept
 	return *this;
 }
 
-}}
+}

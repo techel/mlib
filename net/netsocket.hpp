@@ -10,16 +10,16 @@
 #include <optional>
 #include <cstddef>
 
-#include <yfw/platform.hpp>
+#include <mlib/platform.hpp>
 
-namespace mlib{namespace net{namespace sock
+namespace mlib::net::sock
 {
 
 //
 // platform specific
 //
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 using SocketHandle = uintptr_t;
 static constexpr SocketHandle InvalidSocket = (SocketHandle)~0;
 using ErrorCode = int;
@@ -102,7 +102,7 @@ class Socket
 {
 public:
     enum class State { Disconnected, Ready, Listening, Connecting };
-    State getState() const;
+    State state() const;
 
     enum class Proto { Tcp, Udp };
 
@@ -144,4 +144,4 @@ private:
     void newSocket(int af, int type, int proto);
 };
 
-}}}
+}

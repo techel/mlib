@@ -5,7 +5,7 @@
 
 #include "modinstance.hpp"
 
-namespace YFW{namespace Module
+namespace mlib::process::module
 {
 
 //
@@ -54,4 +54,4 @@ private:
 	size_t Size;
 };
 
-}}
+}

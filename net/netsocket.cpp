@@ -4,7 +4,7 @@
 #include <istream>
 #include <ostream>
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #else
@@ -19,10 +19,10 @@
 #include <fcntl.h>
 #endif
 
-namespace mlib{namespace net{namespace sock
+namespace mlib::net::sock
 {
 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	struct Winsock
 	{
 		Winsock()
@@ -229,7 +229,7 @@ std::string stringIPv4(const IPv4 &ip)
     if(inet_ntop(AF_INET, &addr, buf, sizeof(buf)) > 0)
         return buf;
 
-    throwError("inet_ntop");
+    throwError(".inet_ntop");
 }
 
 std::string stringIPv6(const IPv6 &ip)
@@ -241,7 +241,7 @@ std::string stringIPv6(const IPv6 &ip)
     if(inet_ntop(AF_INET6, &addr, buf, sizeof(buf)) > 0)
         return buf;
 
-    throwError("inet_ntop");
+    throwError(".inet_ntop");
 }
 
 std::string stringIP(const IP &ip)
@@ -324,7 +324,7 @@ void Socket::newSocket(int af, int type, int proto)
     if(Handle == InvalidSocket)
         throwError(".createsocket");
 
-#ifdef YFW_PLATFORM_WIN32 //disable ICMP error when remote udp port is not opened
+#ifdef MLIB_PLATFORM_WIN32 //disable ICMP error when remote udp port is not opened
     if(type == SOCK_DGRAM)
     {
         BOOL newBehavior = FALSE;
@@ -337,7 +337,7 @@ void Socket::newSocket(int af, int type, int proto)
 		int yes = 1; //disable buffering
 		setsockopt(Handle, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes));
 
-		DWORD t = 30000;
+		DWORD t = 15000;
 		setsockopt(Handle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&t), sizeof(t));
 		setsockopt(Handle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&t), sizeof(t));
 	}
@@ -346,7 +346,7 @@ void Socket::newSocket(int af, int type, int proto)
 	{
 		timeval t;
 		t.tv_usec = 0;
-		t.tv_sec = 30;
+		t.tv_sec = 15;
 		setsockopt(Handle, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&t), sizeof(t));
 		setsockopt(Handle, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&t), sizeof(t));
 	}
@@ -374,7 +374,7 @@ Socket &Socket::operator=(Socket &&rhs) noexcept
     return *this;
 }
 
-auto Socket::getState() const -> State
+auto Socket::state() const -> State
 {
     if(CurrentState == State::Connecting)
     {
@@ -430,7 +430,7 @@ auto Socket::connect(const IP &dest, unsigned int port) -> ConnectStatus
 auto Socket::send(const char *src, size_t len) -> SendStatus
 {
     if(::send(Handle, src, len, 
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 		0
 #else
 		MSG_NOSIGNAL 
@@ -479,7 +479,7 @@ auto Socket::receive(char *dest, size_t maxlen, size_t &actuallen) -> ReceiveSta
 size_t Socket::available() const
 {
 	u_long bytesAvail = 0;
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
 	ioctlsocket(Handle, FIONREAD, &bytesAvail);
 #else
 	ioctl(Handle, FIONREAD, &bytesAvail);
@@ -489,7 +489,7 @@ size_t Socket::available() const
 
 void Socket::block(bool b)
 {
-#ifdef YFW_PLATFORM_WIN32
+#ifdef MLIB_PLATFORM_WIN32
     u_long blocking = b ? 0 : 1;
     ioctlsocket(Handle, FIONBIO, &blocking);
 #else
@@ -586,4 +586,4 @@ bool Socket::accept(Socket &sock, IP &src, unsigned int &port)
     return true;
 }
 
-}}}
+}
