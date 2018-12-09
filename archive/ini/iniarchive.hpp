@@ -1,10 +1,12 @@
 #pragma once
 
-#include <iosfwd>
-#include <string>
 #include <map>
+#include <string>
+#include <iosfwd>
 #include <stdexcept>
 #include <functional>
+
+#include <mlib/interface/keyvalueinterface.hpp>
 
 namespace mlib::archive::ini
 {
@@ -29,14 +31,14 @@ public: FileMalformed(unsigned int line, Malformation e) : runtime_error(".archi
 // INI file section
 //
 
-class INISection
+class INISection : public interfaces::IKeyvalue<std::string, std::string>
 {
 public:
     const auto &entries() const { return Entries; }
 
-    void set(std::string name, std::string value);
-    std::string *find(const std::string &ent);
-    const std::string *find(const std::string &ent) const;
+    void set(std::string name, std::string value) override;
+    std::string *find(const std::string &ent) override;
+    const std::string *find(const std::string &ent) const override;
 
 private:
     std::map<std::string, std::string> Entries;

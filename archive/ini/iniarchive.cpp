@@ -65,6 +65,8 @@ static void trimTrailing(std::string &s)
 
 void INIArchive::deserialize(std::istream &src, std::function<void(unsigned int, Malformation)> errorhandler)
 {
+    Sections.clear();
+
     std::string currsectname;
     INISection currsect;
 

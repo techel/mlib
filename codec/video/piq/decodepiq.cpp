@@ -1,13 +1,22 @@
 #include "decodepiq.hpp"
 
-#include <SFML/Graphics/Image.hpp>
+#include <cassert>
+#include <utility>
+#include <stb_image.h>
 
 namespace mlib::codec::video::piq
 {
 
+struct StbDeleter
+{
+    void operator()(stbi_uc *p) { stbi_image_free(p); }
+};
+
+using StbPixelptr = std::unique_ptr<stbi_uc, StbDeleter>;
+
 struct Decoder::ImplData
 {
-    sf::Image CurrentFrame;
+    StbPixelptr Currframe;
 };
 
 static uint32_t read32(const void *ptr)
@@ -65,17 +74,20 @@ bool Decoder::fetchFrame(Videoframe &f)
 
     if(len2 < framelen)
         throw GenericError<StreamUnexpectedEnd>("image data too short");
-    
-    if(!Impl->CurrentFrame.loadFromMemory(ptr2, len))
+
+    int sizex, sizey;
+    StbPixelptr imgptr;
+    if(imgptr.reset(stbi_load_from_memory((const stbi_uc*)ptr2, (int)len, &sizex, &sizey, nullptr, STBI_rgb_alpha)); !imgptr)
         throw GenericError<StreamMalformed>("malformed image");
 
     Source->advanceBuffer(framelen);
 
-    f.Format = Pixelformat::RGBA;
-    f.Layout = Pixellayout::Interleaved;
-    f.Width = Impl->CurrentFrame.getSize().x;
-    f.Height = Impl->CurrentFrame.getSize().y;
-    f.Planes[0] = Impl->CurrentFrame.getPixelsPtr();
+    Impl->Currframe = std::move(imgptr);
+
+    f.Format = Pixelformat::RGBA32I;
+    f.Width = (unsigned int)sizex;
+    f.Height = (unsigned int)sizey;
+    f.Planes[0] = Impl->Currframe.get();
     f.Linestrides[0] = 0;
 
     return true;

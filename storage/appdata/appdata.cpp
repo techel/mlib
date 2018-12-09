@@ -33,7 +33,7 @@ static void appendGenericPath(path &p, const std::string &generic)
     }
 }
 
-Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir)
+Appdata::Appdata(log::ILog &l, const std::string &appsubdir, const std::string &resourcesubdir) : Log(&l)
 {
 
 #ifdef MLIB_PLATFORM_WIN32
@@ -87,13 +87,27 @@ Appdata::Appdata(const std::string &appsubdir, const std::string &resourcesubdir
 
     StoragePath = std::move(appdata);
     ResourcePath = std::move(resdir);
+
+    Log->log(log::Info, ".storage.appdata", "storage path: '" + StoragePath.u8string() + "'");
+    Log->log(log::Info, ".storage.appdata", "resource path: '" + ResourcePath.u8string() + "'");
+}
+
+std::filesystem::path Appdata::filepath(const std::string &spath, Type type)
+{
+    path p = (type == Type::Storage) ? StoragePath : ResourcePath;
+    appendGenericPath(p, spath);
+
+    return p;
 }
 
 std::fstream Appdata::open(const std::string &spath, std::ios::openmode flags, Type type)
 {
-    path p = (type == Type::Storage) ? StoragePath : ResourcePath;
-    appendGenericPath(p, spath);
-    return std::fstream(p, flags);
+    auto p = filepath(spath, type);
+    std::fstream f(p, flags);
+    if(!f)
+        Log->log(log::Warning, ".storage.appdata", "opening file '" + p.u8string() + "' failed");
+
+    return f;
 }
 
 }

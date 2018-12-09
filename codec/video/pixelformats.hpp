@@ -8,16 +8,14 @@ namespace mlib::codec::video
 //
 // pixel formats and layouts
 //
+// <components><bits per pixel><planar (P)|interleaved (I)|semiplanar (S)>
+//
     
 enum class Pixelformat
 {
-    I420,
-    RGBA
-};
-
-enum class Pixellayout
-{
-    Planar, Interleaved, Semiplanar
+    YUV12P,
+    RGBA32I,
+    RGB24I
 };
 
 }

@@ -12,7 +12,7 @@ namespace mlib::codec::video::piq
 template<class T>
 struct GenericError : public GenericCodecError<T>
 {
-    GenericError(const std::string &e) : GenericCodecError("PIQ", e) {}
+    GenericError(const std::string &e) : GenericCodecError<T>("PIQ", e) {}
 };
 
 struct ErrorCode : public GenericError<CodecErrorcode>

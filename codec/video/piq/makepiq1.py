@@ -5,7 +5,7 @@ def main(argv):
 	if len(argv) < 2:
 		print("Description: Creates a PIQ (picture sequence)-container from multiple input files.")
 		print("Usage: <searchpath> <output file>")
-		print("<searchpath> may contain wildcards.");
+		print("<searchpath> may contain wildcards. Input files are sorted by their name");
 		return
 
 	inpath = argv[0]

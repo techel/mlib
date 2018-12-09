@@ -106,13 +106,12 @@ struct ICodecSourcebuffer
 //
 // video frame
 //
-// Holds pointers to up to four planes and their line strides.
+// Holds pointers to up to four planes, their number of bytes and their line strides.
 //
 
 struct Videoframe
 {
     Pixelformat Format;
-    Pixellayout Layout;
     unsigned int Width, Height;
     const void *Planes[4];
     size_t Linestrides[4];

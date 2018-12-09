@@ -24,7 +24,7 @@ namespace mlib::codec::video::h264
 class Decoder : public virtual IVideoDecodec
 {
 public:
-    Decoder(ICodecSourcebuffer &source, std::vector<std::pair<std::string, std::string>> parameters);
+    Decoder(ICodecSourcebuffer &source, std::vector<std::pair<std::string, std::string>> parameters = {});
     ~Decoder();
 
     void codecLogging(CodecLoglevel, CodecLogger);

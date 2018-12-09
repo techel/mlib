@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
-#include <filesystem>
 #include <fstream>
+#include <filesystem>
+
+#include <mlib/log/loginterface.hpp>
 
 namespace mlib::storage::appdata
 {
@@ -34,13 +36,14 @@ enum class Type
 class Appdata
 {
 public:
-    Appdata(const std::string &appsubdir, const std::string &resourcesubdir);
+    Appdata(log::ILog &l, const std::string &appsubdir, const std::string &resourcesubdir);
 
+    std::filesystem::path filepath(const std::string &path, Type type);
     std::fstream open(const std::string &path, std::ios::openmode flags, Type type);
 
 private:
+    log::ILog *Log;
     std::filesystem::path StoragePath, ResourcePath;
-
 };
 
 }

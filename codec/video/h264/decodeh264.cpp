@@ -121,13 +121,12 @@ struct Decoder::ImplData
             CurrentOffset = start + len;
 
             if(success)
-                Decoder->DecodeFrameNoDelay(&static_cast<const unsigned char*>(SourcebufferBegin)[start], len, picptrs, &bufinfo);
+                Decoder->DecodeFrameNoDelay(&static_cast<const unsigned char*>(SourcebufferBegin)[start], static_cast<int>(len), picptrs, &bufinfo);
             else
                 return false;
         }
 
-        f.Format = Pixelformat::I420;
-        f.Layout = Pixellayout::Planar;
+        f.Format = Pixelformat::YUV12P;
         f.Width = bufinfo.UsrData.sSystemBuffer.iWidth;
         f.Height = bufinfo.UsrData.sSystemBuffer.iHeight;
         f.Planes[0] = picptrs[0];

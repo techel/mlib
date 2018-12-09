@@ -11,7 +11,7 @@ namespace mlib::codec::video::piq
 {
 
 //
-// picture sequence decoder using SFML (sf::Image)
+// picture sequence decoder (using stb_image)
 //
 // format: (little endian)
 // 'PIQ!' signature
@@ -22,11 +22,13 @@ namespace mlib::codec::video::piq
 // [uint32] image size
 // ... image data
 //
+// plane0 points to image RGBA pixels.
+//
 
 class Decoder : public IVideoDecodec
 {
 public:
-    Decoder(ICodecSourcebuffer &source, const std::vector<std::pair<std::string, std::string>> &opts);
+    Decoder(ICodecSourcebuffer &source, const std::vector<std::pair<std::string, std::string>> &opts = {});
     ~Decoder();
 
     void codecLogging(CodecLoglevel, CodecLogger) override;
